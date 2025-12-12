@@ -49,10 +49,9 @@ func mulMatRowAndCol(r, c []float64) float64 {
 	return res
 }
 
-func (m1 *Matrix) Mul(m2 *Matrix) (Matrix, error) {
-
+func (m1 Matrix) Mul(m2 *Matrix) Matrix {
 	if m1.C != m2.R {
-		return Matrix{}, errors.New("can't multiply matrices with incompatible dimensions")
+		panic("can't multiply matrices with incompatible dimensions")
 	}
 
 	res := NewMatrix(m2.C, m1.R)
@@ -66,7 +65,7 @@ func (m1 *Matrix) Mul(m2 *Matrix) (Matrix, error) {
 		}
 	}
 
-	return res, nil
+	return res
 }
 
 func (m *Matrix) Equals(other Matrix) bool {

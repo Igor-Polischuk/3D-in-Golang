@@ -21,10 +21,7 @@ func TestMatrix(t *testing.T) {
 			{27, 9},
 		})
 
-		res, err := m1.Mul(&m2)
-		if err != nil {
-			t.Errorf("Error multiplying matrices: %v", err)
-		}
+		res := m1.Mul(&m2)
 
 		if !res.Equals(expectedRes) {
 			t.Errorf("Multiplication result is not equal to expected result: %v != %v", res, expectedRes)
@@ -47,10 +44,7 @@ func TestMatrix(t *testing.T) {
 			{23, -4, 17},
 		})
 
-		res, err = m1.Mul(&m2)
-		if err != nil {
-			t.Errorf("Error multiplying matrices: %v", err)
-		}
+		res = m1.Mul(&m2)
 
 		if !res.Equals(expectedRes) {
 			t.Errorf("Multiplication result is not equal to expected result: %v != %v", res, expectedRes)
@@ -73,11 +67,7 @@ func TestMatrix(t *testing.T) {
 
 		expectedRes := UnitMatrix(3)
 
-		res, err := m1.Mul(&m2)
-
-		if err != nil {
-			t.Errorf("Error multiplying matrices: %v", err)
-		}
+		res := m1.Mul(&m2)
 
 		if !res.Equals(expectedRes) {
 			t.Errorf("Multiplication result is not equal to expected result: %v != %v", res, expectedRes)
