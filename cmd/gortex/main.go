@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"gortex/internals/geom"
-	"gortex/internals/screen"
-	"gortex/internals/shapes"
+	"gortex/internal/geom"
+	"gortex/internal/screen"
+	"gortex/internal/shapes"
 
 	"golang.org/x/term"
 )

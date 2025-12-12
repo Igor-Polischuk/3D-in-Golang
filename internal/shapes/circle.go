@@ -1,8 +1,8 @@
 package shapes
 
 import (
-	"gortex/internals/drawable"
-	"gortex/internals/geom"
+	"gortex/internal/drawable"
+	"gortex/internal/geom"
 )
 
 type Circle struct {

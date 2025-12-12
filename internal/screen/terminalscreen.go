@@ -2,7 +2,7 @@ package screen
 
 import (
 	"fmt"
-	"gortex/internals/drawable"
+	"gortex/internal/drawable"
 	"os"
 	"os/exec"
 	"runtime"
