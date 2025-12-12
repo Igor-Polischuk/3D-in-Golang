@@ -2,7 +2,6 @@ package screen
 
 import (
 	"fmt"
-	"gortex/internal/drawable"
 	"os"
 	"os/exec"
 	"runtime"
@@ -40,12 +39,8 @@ func (s *TermScreen) BeginFrame() {
 	ClearTerminal()
 }
 
-func (s *TermScreen) Draw(d drawable.Drawable, texture []rune) {
-	ctx := drawable.RenderContext{
-		Rasterizer: s,
-		Texture:    texture,
-	}
-	d.Rasterize(ctx)
+func (s *TermScreen) Draw() {
+
 }
 
 func (s *TermScreen) Present() {

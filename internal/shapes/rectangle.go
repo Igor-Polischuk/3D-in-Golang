@@ -1,8 +1,8 @@
 package shapes
 
 import (
-	"gortex/internal/drawable"
 	"gortex/internal/geom"
+	"math"
 )
 
 type Rectangle struct {
@@ -11,6 +11,14 @@ type Rectangle struct {
 	Angle int16
 }
 
-func (r Rectangle) Rasterize(ctx drawable.RenderContext) {
-	ctx.Rasterizer.RasterRect(r.Pos.X, r.Pos.Y, r.Size.X, r.Size.Y, r.Angle, ctx.Texture)
+func (r Rectangle) ModelMatrix() geom.Matrix {
+	translate := geom.Translate(r.Pos.X, r.Pos.Y)
+	rotate := geom.Rotate(float64(r.Angle))
+	scale := geom.Scale(r.Size.X, r.Size.Y)
+
+	return translate.Mul(&rotate).Mul(&scale)
+}
+
+func (r Rectangle) Contains(x, y float64) bool {
+	return math.Abs(x) <= 0.5 && math.Abs(y) <= 0.5
 }

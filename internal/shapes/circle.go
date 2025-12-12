@@ -1,7 +1,6 @@
 package shapes
 
 import (
-	"gortex/internal/drawable"
 	"gortex/internal/geom"
 )
 
@@ -10,12 +9,13 @@ type Circle struct {
 	R   float64
 }
 
-func (c *Circle) IsPointWithin(x, y float64) bool {
-	return x*x+y*y < c.R
+func (c Circle) Contains(x, y float64) bool {
+	return x*x+y*y <= 1
 }
 
-func (c Circle) Rasterize(ctx drawable.RenderContext) {
-	// r := ctx.Rasterizer
-	// r.RasterCircle(float32(c.Pos.X), float32(c.Pos.Y), c.R)
-	ctx.Rasterizer.RasterCircle(c.Pos.X, c.Pos.Y, c.R, ctx.Texture)
+func (c Circle) ModelMatrix() geom.Matrix {
+	translate := geom.Translate(c.Pos.X, c.Pos.Y)
+	scale := geom.Scale(c.R, c.R)
+
+	return translate.Mul(&scale)
 }

@@ -1,8 +1,17 @@
 package drawable
 
+import "gortex/internal/geom"
+
+type ShapeModel = geom.Matrix
+type ShapeContainsFunction = func(x, y float64) bool
+
+type Shape interface {
+	Contains(x, y float64) bool
+	ModelMatrix() geom.Matrix
+}
+
 type Rasterizer interface {
-	RasterCircle(x, y, r float64, texture []rune)
-	RasterRect(x, y, w, h float64, angle int16, texture []rune)
+	Raster(shape Shape)
 }
 
 type RenderContext struct {
