@@ -2,6 +2,7 @@ package geom
 
 import (
 	"errors"
+	"fmt"
 	"math"
 	"reflect"
 )
@@ -51,6 +52,8 @@ func mulMatRowAndCol(r, c []float64) float64 {
 
 func (m1 Matrix) Mul(m2 *Matrix) Matrix {
 	if m1.C != m2.R {
+		fmt.Println(m1)
+		fmt.Println(m2)
 		panic("can't multiply matrices with incompatible dimensions")
 	}
 

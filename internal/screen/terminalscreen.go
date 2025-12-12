@@ -2,6 +2,7 @@ package screen
 
 import (
 	"fmt"
+	"gortex/internal/camera"
 	"os"
 	"os/exec"
 	"runtime"
@@ -12,14 +13,16 @@ type TermScreen struct {
 	aspect, pixelAspect float64
 	Height, Width       int
 	bgRune              rune
+	Cam                 *camera.Camera
 }
 
 const PIXEL_ASPECT = 11.0 / 24.0
 
-func InitTerminalScreen(w, h int, bgRune rune) TermScreen {
+func InitTerminalScreen(w, h int, cam *camera.Camera, bgRune rune) TermScreen {
 	screen := TermScreen{
 		buffer:      make([]rune, h*w),
 		aspect:      float64(w) / float64(h),
+		Cam:         cam,
 		pixelAspect: PIXEL_ASPECT,
 		Width:       w, Height: h,
 		bgRune: bgRune,
