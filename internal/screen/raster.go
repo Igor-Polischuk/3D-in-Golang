@@ -2,31 +2,29 @@ package screen
 
 import "math"
 
-func (s *TermScreen) RasterCircle(x, y, r float32) {
-	tex := s.currentTexture
-
-	for i := range s.width {
-		for j := range s.height {
-			dx := float32(i)/float32(s.width)*2 - 1
-			dy := float32(j)/float32(s.height)*2 - 1
+func (s *TermScreen) RasterCircle(x, y, r float64, texture []rune) {
+	for i := range s.Width {
+		for j := range s.Height {
+			dx := float64(i)/float64(s.Width)*2 - 1
+			dy := float64(j)/float64(s.Height)*2 - 1
 			dx -= x
 			dy -= y
 
-			dx *= float32(s.aspect) * float32(s.pixelAspect)
+			dx *= float64(s.aspect) * float64(s.pixelAspect)
 
 			dist := math.Sqrt((float64(dx*dx + dy*dy)))
 			color := int(1 / dist)
 
 			if color <= 0 {
 				color = 0
-			} else if color >= len(tex) {
-				color = len(tex) - 1
+			} else if color >= len(texture) {
+				color = len(texture) - 1
 			}
 
-			pixel := tex[color]
+			pixel := texture[color]
 
 			if dx*dx+dy*dy < r {
-				s.buffer[i+j*s.width] = pixel
+				s.buffer[i+j*s.Width] = pixel
 			}
 		}
 	}

@@ -18,10 +18,16 @@ func main() {
 	}
 
 	tScreen := screen.InitTerminalScreen(w, h, ' ')
-	c := shapes.Circle{Pos: geom.Vector2{X: 0, Y: 0}, R: 0.99}
+	c1 := shapes.Circle{Pos: geom.Vector2{X: -1, Y: -1}, R: 0.5}
+	c2 := shapes.Circle{Pos: geom.Vector2{X: 1, Y: 1}, R: 0.5}
+	c3 := shapes.Circle{Pos: geom.Vector2{X: -1, Y: 1}, R: 0.5}
+	c4 := shapes.Circle{Pos: geom.Vector2{X: 1, Y: -1}, R: 0.5}
 
 	tScreen.BeginFrame()
-	tScreen.UseTexture(screen.GRADIENT)
-	tScreen.Draw(c)
+	tScreen.Draw(c1, screen.GRADIENT)
+	tScreen.Draw(c2, screen.GRADIENT)
+	tScreen.Draw(c3, screen.GRADIENT)
+	tScreen.Draw(c4, []rune{'@'})
 	tScreen.Present()
+
 }
