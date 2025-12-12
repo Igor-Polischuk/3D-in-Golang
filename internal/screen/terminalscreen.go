@@ -10,6 +10,7 @@ import (
 
 type TermScreen struct {
 	buffer              []rune
+	currentTexture      []rune
 	aspect, pixelAspect float64
 	height, width       int
 	bgRune              rune
@@ -23,7 +24,8 @@ func InitTerminalScreen(w, h int, bgRune rune) TermScreen {
 		aspect:      float64(w) / float64(h),
 		pixelAspect: PIXEL_ASPECT,
 		width:       w, height: h,
-		bgRune: bgRune,
+		bgRune:         bgRune,
+		currentTexture: []rune{'@'},
 	}
 
 	for i := range screen.buffer {
@@ -47,6 +49,10 @@ func (s *TermScreen) Draw(drawable drawable.Drawable) {
 func (s *TermScreen) Present() {
 	str := string(s.buffer)
 	fmt.Println(str)
+}
+
+func (s *TermScreen) UseTexture(t []rune) {
+	s.currentTexture = t
 }
 
 func ClearTerminal() {
