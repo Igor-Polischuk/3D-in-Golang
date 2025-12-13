@@ -32,7 +32,8 @@ func (s *TermScreen) RasterShape(shape drawable.Shape) {
 			// Now (px,py) are coordinates in SCREEN SPACE.
 			// We transform them to WORLD through the inverse of the full matrix.
 			px := float64(i)/float64(s.Width)*2 - 1
-			py := float64(j)/float64(s.Height)*2 - 1
+			py := 1 - float64(j)/float64(s.Height)*2
+
 			px *= s.aspect * s.pixelAspect
 
 			world := geom.Vector2{X: px, Y: py}
