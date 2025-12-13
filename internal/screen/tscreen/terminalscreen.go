@@ -3,9 +3,6 @@ package tscreen
 import (
 	"fmt"
 	"gortex/internal/camera"
-	"os"
-	"os/exec"
-	"runtime"
 )
 
 type TermScreen struct {
@@ -32,6 +29,9 @@ func InitTerminalScreen(w, h int, cam *camera.Camera, bgRune rune) TermScreen {
 		screen.buffer[i] = bgRune
 	}
 
+	fmt.Print("\033[2J")   // Clear screen
+	fmt.Print("\033[?25l") // Hide cursor
+
 	return screen
 }
 
@@ -39,7 +39,6 @@ func (s *TermScreen) BeginFrame() {
 	for i := range s.buffer {
 		s.buffer[i] = s.bgRune
 	}
-	ClearTerminal()
 }
 
 func (s *TermScreen) Draw() {
@@ -49,16 +48,4 @@ func (s *TermScreen) Draw() {
 func (s *TermScreen) Present() {
 	str := string(s.buffer)
 	fmt.Println(str)
-}
-
-func ClearTerminal() {
-	if runtime.GOOS == "windows" {
-		cmd := exec.Command("cmd", "/c", "cls")
-		cmd.Stdout = os.Stdout
-		cmd.Run()
-	} else {
-		cmd := exec.Command("clear")
-		cmd.Stdout = os.Stdout
-		cmd.Run()
-	}
 }
