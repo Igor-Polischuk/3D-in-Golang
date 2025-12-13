@@ -137,3 +137,11 @@ func (s *GLScreen) Present() {
 	s.window.SwapBuffers()
 	glfw.PollEvents()
 }
+
+func (s *GLScreen) Width() int {
+	return s.W
+}
+
+func (s *GLScreen) Height() int {
+	return s.H
+}

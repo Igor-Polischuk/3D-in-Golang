@@ -50,6 +50,6 @@ func (s *GLScreen) RasterShape(shape drawable.Shape) {
 	}
 }
 
-func (s *GLScreen) DrawLine(x0, y0, x1, y1 int, color Color) {
-	utils.LineBresenham(x0, y0, x1, y1, func(x, y int) { s.SetPixel(x, y, color) })
+func (s *GLScreen) DrawLine(x0, y0, x1, y1 int) {
+	utils.LineBresenham(x0, y0, x1, y1, func(x, y int) { s.SetPixel(x, y, GetColor(255, 255, 255)) })
 }

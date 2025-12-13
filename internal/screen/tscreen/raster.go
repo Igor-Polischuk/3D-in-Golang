@@ -27,13 +27,13 @@ func (s *TermScreen) RasterShape(shape drawable.Shape) {
 	// and then check: shape.Contains(localPoint).
 	inv, _ := mv.Inverse()
 
-	for i := 0; i < s.Width; i++ {
-		for j := 0; j < s.Height; j++ {
+	for i := 0; i < s.W; i++ {
+		for j := 0; j < s.H; j++ {
 
 			// Now (px,py) are coordinates in SCREEN SPACE.
 			// We transform them to WORLD through the inverse of the full matrix.
-			px := float64(i)/float64(s.Width)*2 - 1
-			py := 1 - float64(j)/float64(s.Height)*2
+			px := float64(i)/float64(s.W)*2 - 1
+			py := 1 - float64(j)/float64(s.H)*2
 
 			px *= s.aspect * s.pixelAspect
 
@@ -41,14 +41,14 @@ func (s *TermScreen) RasterShape(shape drawable.Shape) {
 			local := inv.TransformPoint(world)
 
 			if shape.Contains(local.X, local.Y) {
-				s.buffer[i+j*s.Width] = '@'
+				s.buffer[i+j*s.W] = '@'
 			}
 		}
 	}
 }
 
-func (s *TermScreen) DrawLine(x0, y0, x1, y1 int, pixel rune) {
-	y0_raster := s.Height - 1 - y0
-	y1_raster := s.Height - 1 - y1
-	utils.LineBresenham(x0, y0_raster, x1, y1_raster, func(x, y int) { s.SetPixel(x, y, pixel) })
+func (s TermScreen) DrawLine(x0, y0, x1, y1 int) {
+	y0_raster := s.H - 1 - y0
+	y1_raster := s.H - 1 - y1
+	utils.LineBresenham(x0, y0_raster, x1, y1_raster, func(x, y int) { s.SetPixel(x, y, '@') })
 }

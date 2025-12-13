@@ -3,12 +3,13 @@ package tscreen
 import (
 	"fmt"
 	"gortex/internal/camera"
+	"strings"
 )
 
 type TermScreen struct {
 	buffer              []rune
 	aspect, pixelAspect float64
-	Height, Width       int
+	H, W                int
 	bgRune              rune
 	Cam                 *camera.Camera
 }
@@ -21,7 +22,7 @@ func InitTerminalScreen(w, h int, cam *camera.Camera, bgRune rune) TermScreen {
 		aspect:      float64(w) / float64(h),
 		Cam:         cam,
 		pixelAspect: PIXEL_ASPECT,
-		Width:       w, Height: h,
+		W:           w, H: h,
 		bgRune: bgRune,
 	}
 
@@ -42,12 +43,39 @@ func (s *TermScreen) BeginFrame() {
 }
 
 func (s *TermScreen) Present() {
-	str := string(s.buffer)
-	fmt.Println(str)
+	// Move cursor to top-left (0,0) to overwrite previous frame
+	fmt.Print("\033[H") // Move cursor to home position (top-left)
+
+	// Build output string row by row for efficient printing
+	var sb strings.Builder
+	sb.Grow(s.W*s.H + s.H) // Pre-allocate space for all characters + newlines
+
+	for y := 0; y < s.H; y++ {
+		start := y * s.W
+		end := start + s.W
+		if end > len(s.buffer) {
+			end = len(s.buffer)
+		}
+		sb.WriteString(string(s.buffer[start:end]))
+		if y < s.H-1 {
+			sb.WriteByte('\n') // Newline between rows
+		}
+	}
+
+	// Print everything at once to minimize flickering
+	fmt.Print(sb.String())
 }
 
 func (s *TermScreen) SetPixel(x, y int, pixel rune) {
-	if x >= 0 && x < s.Width && y >= 0 && y < s.Height {
-		s.buffer[x+y*s.Width] = pixel
+	if x >= 0 && x < s.W && y >= 0 && y < s.H {
+		s.buffer[x+y*s.W] = pixel
 	}
+}
+
+func (s TermScreen) Width() int {
+	return s.W
+}
+
+func (s TermScreen) Height() int {
+	return s.H
 }
