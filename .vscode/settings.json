@@ -1,5 +1,7 @@
 {
     "cSpell.words": [
+        "glfw",
+        "glfwscreen",
         "gortex",
         "Rasterizer",
         "terminalscreen",
