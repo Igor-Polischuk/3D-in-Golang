@@ -2,48 +2,75 @@ package main
 
 import (
 	"fmt"
-	"gortex/internal/camera"
 	"gortex/internal/geom"
-
+	"gortex/internal/mesh"
+	"gortex/internal/render"
 	"gortex/internal/screen/glfwscreen"
-	"gortex/internal/screen/tscreen"
-	"gortex/internal/shapes"
+	"math"
 
 	"golang.org/x/term"
 )
 
 func main() {
-
 	w, h, err := term.GetSize(0)
-
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	cam := camera.GetCamera(0, 0, 1)
-	gl := glfwscreen.InitGLFWScreen(1080, 720, &cam)
-	ts := tscreen.InitTerminalScreen(w, h, &cam, ' ')
+	geom.Rotate(float64(w + h))
 
-	c := shapes.Circle{Pos: geom.Vector2{X: 1, Y: 1}, R: 0.5}
-	r := shapes.Rectangle{Pos: geom.Vector2{X: 0, Y: 0}, Size: geom.Vector2{X: 1, Y: 0.1}, Angle: 45}
-	r2 := shapes.Rectangle{Pos: geom.Vector2{X: -1, Y: 1}, Size: geom.Vector2{X: 1, Y: 0.1}, Angle: 0}
+	trz := 0.0
+	crz := 0.0
+	srz := 0.0
+
+	// screen := tscreen.InitTerminalScreen(w, h, nil, ' ')
+	screen := glfwscreen.InitGLFWScreen(1080, 720, nil)
 
 	for {
-		gl.BeginFrame()
-		ts.BeginFrame()
+		screen.BeginFrame()
 
-		gl.RasterShape(c)
-		ts.RasterShape(c)
-		gl.RasterShape(r)
-		gl.RasterShape(r2)
-		ts.RasterShape(r)
-		ts.RasterShape(r2)
+		triangle := mesh.NewTriangle()
+		square := mesh.NewSquare()
+		cube := mesh.NewCube()
 
-		ts.DrawLine(0, 0, ts.Width, ts.Height, '~')
-		gl.DrawLine(0, 0, gl.W, gl.H, glfwscreen.GetColor(100, 100, 100))
+		tModel := geom.Translate3D(0, 0, -3)
+		tRotated := geom.RotateY(trz)
+		tModel = tModel.Mul(&tRotated)
 
-		gl.Present()
-		ts.Present()
+		cModel := geom.Translate3D(-2, 0, -3)
+		cRotated := geom.RotateY(crz)
+		cModel = cModel.Mul(&cRotated)
+
+		sModel := geom.Translate3D(2, 0, -3)
+		sRotated := geom.RotateY(srz)
+		sModel = sModel.Mul(&sRotated)
+
+		// VIEW → камера в (0,0,0), дивиться у -Z
+		eye := geom.Vector3{X: 0, Y: 0, Z: 2}
+		target := geom.Vector3{X: 0, Y: 0, Z: -1}
+		up := geom.Vector3{X: 0, Y: 1, Z: 0}
+
+		view := geom.LookAt(eye, target, up)
+
+		// PROJECTION
+		aspect := float64(screen.Width()) / float64(screen.Height())
+		fov := 60 * math.Pi / 180
+		proj := geom.Perspective(fov, aspect, 0.1, 100)
+
+		// FINAL MVP
+		tMVP := proj.Mul(&view).Mul(&tModel)
+		cMVP := proj.Mul(&view).Mul(&cModel)
+		sMVP := proj.Mul(&view).Mul(&sModel)
+
+		render.RenderMesh(triangle, tMVP, screen)
+		render.RenderMesh(square, sMVP, screen)
+		render.RenderMesh(cube, cMVP, screen)
+
+		screen.Present()
+
+		trz += 0.03
+		srz -= 0.01
+		crz -= 0.01
 	}
 }
