@@ -1,4 +1,4 @@
-package screen
+package tscreen
 
 import (
 	"gortex/internal/drawable"

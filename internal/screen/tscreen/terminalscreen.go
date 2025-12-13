@@ -1,4 +1,4 @@
-package screen
+package tscreen
 
 import (
 	"fmt"
