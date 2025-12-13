@@ -87,7 +87,7 @@ func RotateZ(a float64) Matrix {
 	})
 }
 
-func (m *Matrix) TransformPoint3D(v Vector3) Vector3 {
+func (m *Matrix) TransformPoint3(v Vector3) Vector3 {
 	x := v.X
 	y := v.Y
 	z := v.Z
@@ -122,7 +122,7 @@ func Perspective(fov, aspect, near, far float64) Matrix {
 func LookAt(eye, target, up Vector3) Matrix {
 	f := target.Sub(eye).Normalize()
 	r := Cross(f, up).Normalize()
-	u := Cross(r, f)
+	u := Cross(r, f).Normalize() // Normalize the up vector
 
 	return InitMatrix([][]float64{
 		{r.X, u.X, -f.X, -Dot(r, eye)},
