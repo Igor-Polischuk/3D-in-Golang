@@ -6,6 +6,10 @@ type Vector3 struct {
 	X, Y, Z float64
 }
 
+func GetVector3(x, y, z float64) Vector3 {
+	return Vector3{X: x, Y: y, Z: z}
+}
+
 func (v *Vector3) Add(other Vector3) Vector3 {
 	return Vector3{X: v.X + other.X, Y: v.Y + other.Y, Z: v.Z + other.Z}
 }
