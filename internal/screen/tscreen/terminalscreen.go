@@ -41,11 +41,13 @@ func (s *TermScreen) BeginFrame() {
 	}
 }
 
-func (s *TermScreen) Draw() {
-
-}
-
 func (s *TermScreen) Present() {
 	str := string(s.buffer)
 	fmt.Println(str)
+}
+
+func (s *TermScreen) SetPixel(x, y int, pixel rune) {
+	if x >= 0 && x < s.Width && y >= 0 && y < s.Height {
+		s.buffer[x+y*s.Width] = pixel
+	}
 }

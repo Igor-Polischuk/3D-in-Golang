@@ -106,14 +106,14 @@ func (s *GLScreen) BeginFrame() {
 	}
 }
 
-func (s *GLScreen) SetPixel(x, y int, r, g, b uint8) {
+func (s *GLScreen) SetPixel(x, y int, color Color) {
 	if x < 0 || y < 0 || x >= s.W || y >= s.H {
 		return
 	}
 	i := (y*s.W + x) * 4
-	s.buffer[i+0] = r
-	s.buffer[i+1] = g
-	s.buffer[i+2] = b
+	s.buffer[i+0] = color.R
+	s.buffer[i+1] = color.G
+	s.buffer[i+2] = color.B
 	s.buffer[i+3] = 255
 }
 
