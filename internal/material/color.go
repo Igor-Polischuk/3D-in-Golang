@@ -1,4 +1,4 @@
-package glfwscreen
+package material
 
 type Color struct {
 	R, G, B uint8
