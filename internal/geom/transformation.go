@@ -131,3 +131,11 @@ func LookAt(eye, target, up Vector3) Matrix {
 		{0, 0, 0, 1},
 	})
 }
+
+func (m Matrix) TransformVector(v Vector3) Vector3 {
+	return Vector3{
+		X: m.M[0][0]*v.X + m.M[0][1]*v.Y + m.M[0][2]*v.Z,
+		Y: m.M[1][0]*v.X + m.M[1][1]*v.Y + m.M[1][2]*v.Z,
+		Z: m.M[2][0]*v.X + m.M[2][1]*v.Y + m.M[2][2]*v.Z,
+	}
+}

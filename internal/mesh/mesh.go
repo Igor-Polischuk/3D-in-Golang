@@ -8,8 +8,9 @@ type Mesh struct {
 }
 
 type VertexOut struct {
-	NDC   geom.Vector3 // координати після perspective divide (X,Y,Z)
-	ViewZ float64      // Z у view space
+	NDC     geom.Vector3 // координати після perspective divide (X,Y,Z)
+	ViewZ   float64      // Z у view space
+	ViewPos geom.Vector3
 }
 
 func (m Mesh) Transform(model, view, proj geom.Matrix) []VertexOut {
@@ -37,8 +38,9 @@ func (m Mesh) Transform(model, view, proj geom.Matrix) []VertexOut {
 		}
 
 		out[i] = VertexOut{
-			NDC:   ndc,
-			ViewZ: viewZ,
+			NDC:     ndc,
+			ViewZ:   viewZ,
+			ViewPos: vv,
 		}
 	}
 

@@ -67,6 +67,14 @@ func (r Renderer) fillTriangle(
 	a, b, c mesh.VertexOut,
 	mat material.Material,
 ) {
+	ab := b.ViewPos.Sub(a.ViewPos)
+	ac := c.ViewPos.Sub(a.ViewPos)
+	normal := geom.Cross(ab, ac).Normalize()
+
+	// if normal.Z >= 0 {
+	// 	return
+	// }
+
 	ax, ay := ToScreen(a.NDC, r.screen.Width(), r.screen.Height())
 	bx, by := ToScreen(b.NDC, r.screen.Width(), r.screen.Height())
 	cx, cy := ToScreen(c.NDC, r.screen.Width(), r.screen.Height())
@@ -96,7 +104,7 @@ func (r Renderer) fillTriangle(
 				wc := float64(w2) / float64(area)
 
 				z := wa*a.ViewZ + wb*b.ViewZ + wc*c.ViewZ
-				pixel := mat.Shade(material.FragmentInput{X: x, Y: y, Z: z})
+				pixel := mat.Shade(material.FragmentInput{X: x, Y: y, Z: z, Normal: normal})
 				r.setPixel(x, y, z, pixel)
 			}
 		}

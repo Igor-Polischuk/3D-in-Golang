@@ -178,7 +178,7 @@ func (m *Matrix) CofactorMatrix() (Matrix, error) {
 }
 
 // M⁻¹ = (1/det(M)) * adj(M)
-func (m *Matrix) Inverse() (Matrix, error) {
+func (m Matrix) Inverse() (Matrix, error) {
 	if m.R != m.C {
 		return Matrix{}, errors.New("only square matrices can be inverted")
 	}
