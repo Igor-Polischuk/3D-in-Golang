@@ -5,6 +5,7 @@ import (
 	"gortex/internal/geom"
 	"gortex/internal/mesh"
 	"gortex/internal/render"
+	"gortex/internal/scene"
 	"gortex/internal/screen/glfwscreen"
 	"math"
 
@@ -20,34 +21,22 @@ func main() {
 
 	geom.Rotate(float64(w + h))
 
-	trz := 0.0
-	crz := 0.0
-	srz := 0.0
-
 	// screen := tscreen.InitTerminalScreen(w, h, nil, ' ')
 	screen := glfwscreen.InitGLFWScreen(1080, 720, nil)
+
+	cube1 := scene.NewEntity(mesh.NewCube(geom.GetVector3(1, 1, 1)), geom.GetVector3(0, 0.5, 0))
+	// cube2 := scene.NewEntity(mesh.NewCube(geom.GetVector3(1, 1, 1)), geom.GetVector3(1, 0, 0))
+	// cube3 := scene.NewEntity(mesh.NewCube(geom.GetVector3(1, 1, 1)), geom.GetVector3(-1, 0, 0))
+	// cube4 := scene.NewEntity(mesh.NewCube(geom.GetVector3(1, 1, 1)), geom.GetVector3(0, 0, 1))
+	// terrain := scene.NewEntity()
+
+	cubes := []scene.Entity{cube1}
 
 	for {
 		screen.BeginFrame()
 
-		triangle := mesh.NewTriangle()
-		square := mesh.NewSquare()
-		cube := mesh.NewCube()
-
-		tModel := geom.Translate3D(0, 0, -3)
-		tRotated := geom.RotateY(trz)
-		tModel = tModel.Mul(&tRotated)
-
-		cModel := geom.Translate3D(-2, 0, -3)
-		cRotated := geom.RotateY(crz)
-		cModel = cModel.Mul(&cRotated)
-
-		sModel := geom.Translate3D(2, 0, -3)
-		sRotated := geom.RotateY(srz)
-		sModel = sModel.Mul(&sRotated)
-
 		// VIEW → камера в (0,0,0), дивиться у -Z
-		eye := geom.Vector3{X: 0, Y: 0, Z: 2}
+		eye := geom.Vector3{X: 0, Y: 0, Z: 5}
 		target := geom.Vector3{X: 0, Y: 0, Z: -1}
 		up := geom.Vector3{X: 0, Y: 1, Z: 0}
 
@@ -58,19 +47,15 @@ func main() {
 		fov := 60 * math.Pi / 180
 		proj := geom.Perspective(fov, aspect, 0.1, 100)
 
-		// FINAL MVP
-		tMVP := proj.Mul(&view).Mul(&tModel)
-		cMVP := proj.Mul(&view).Mul(&cModel)
-		sMVP := proj.Mul(&view).Mul(&sModel)
+		for _, cube := range cubes {
+			model := cube.ModelMatrix()
 
-		render.RenderMesh(triangle, tMVP, screen)
-		render.RenderMesh(square, sMVP, screen)
-		render.RenderMesh(cube, cMVP, screen)
+			// FINAL MVP
+			MVP := proj.Mul(&view).Mul(&model)
+
+			render.RenderMesh(cube.Mesh, MVP, screen)
+		}
 
 		screen.Present()
-
-		trz += 0.03
-		srz -= 0.01
-		crz -= 0.01
 	}
 }
