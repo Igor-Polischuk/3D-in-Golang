@@ -3,6 +3,7 @@ package tscreen
 import (
 	"gortex/internal/drawable"
 	"gortex/internal/geom"
+	"gortex/internal/material"
 	"gortex/internal/utils"
 )
 
@@ -47,8 +48,8 @@ func (s *TermScreen) RasterShape(shape drawable.Shape) {
 	}
 }
 
-func (s TermScreen) DrawLine(x0, y0, x1, y1 int) {
+func (s TermScreen) DrawLine(x0, y0, x1, y1 int, symbol rune) {
 	y0_raster := s.H - 1 - y0
 	y1_raster := s.H - 1 - y1
-	utils.LineBresenham(x0, y0_raster, x1, y1_raster, func(x, y int) { s.SetPixel(x, y, '-') })
+	utils.LineBresenham(x0, y0_raster, x1, y1_raster, func(x, y int) { s.SetPixel(x, y, material.Pixel{Symbol: symbol}) })
 }

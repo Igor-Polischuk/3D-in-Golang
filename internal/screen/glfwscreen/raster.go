@@ -3,6 +3,7 @@ package glfwscreen
 import (
 	"gortex/internal/drawable"
 	"gortex/internal/geom"
+	"gortex/internal/material"
 	"gortex/internal/utils"
 )
 
@@ -50,6 +51,6 @@ func (s *GLScreen) RasterShape(shape drawable.Shape) {
 	}
 }
 
-func (s *GLScreen) DrawLine(x0, y0, x1, y1 int) {
-	utils.LineBresenham(x0, y0, x1, y1, func(x, y int) { s.SetPixel(x, y, GetColor(255, 255, 255)) })
+func (s *GLScreen) DrawLine(x0, y0, x1, y1 int, color material.Color) {
+	utils.LineBresenham(x0, y0, x1, y1, func(x, y int) { s.SetPixel(x, y, material.Pixel{Color: color}) })
 }

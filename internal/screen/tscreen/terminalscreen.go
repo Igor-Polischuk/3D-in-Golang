@@ -3,6 +3,7 @@ package tscreen
 import (
 	"fmt"
 	"gortex/internal/camera"
+	"gortex/internal/material"
 	"strings"
 )
 
@@ -66,9 +67,10 @@ func (s *TermScreen) Present() {
 	fmt.Print(sb.String())
 }
 
-func (s *TermScreen) SetPixel(x, y int, pixel rune) {
+func (s TermScreen) SetPixel(x, y int, pixel material.Pixel) {
+	symbol := pixel.Symbol
 	if x >= 0 && x < s.W && y >= 0 && y < s.H {
-		s.buffer[x+y*s.W] = pixel
+		s.buffer[x+y*s.W] = symbol
 	}
 }
 

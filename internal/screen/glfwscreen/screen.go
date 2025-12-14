@@ -2,6 +2,7 @@ package glfwscreen
 
 import (
 	"gortex/internal/camera"
+	"gortex/internal/material"
 	"runtime"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
@@ -106,10 +107,11 @@ func (s *GLScreen) BeginFrame() {
 	}
 }
 
-func (s *GLScreen) SetPixel(x, y int, color Color) {
+func (s *GLScreen) SetPixel(x, y int, pixel material.Pixel) {
 	if x < 0 || y < 0 || x >= s.W || y >= s.H {
 		return
 	}
+	color := pixel.Color
 	i := (y*s.W + x) * 4
 	s.buffer[i+0] = color.R
 	s.buffer[i+1] = color.G
