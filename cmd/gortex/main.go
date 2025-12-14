@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"gortex/internal/geom"
+	"gortex/internal/material"
 	"gortex/internal/mesh"
 	"gortex/internal/render"
 	"gortex/internal/scene"
@@ -26,10 +27,17 @@ func main() {
 	renderer := render.NewRenderer(screen)
 	scn := scene.New()
 
-	cube1 := scene.NewEntity(mesh.NewCube(geom.GetVector3(1, 1, 1)), geom.GetVector3(0, 0, 0))
-	cube2 := scene.NewEntity(mesh.NewCube(geom.GetVector3(1, 1, 1)), geom.GetVector3(0, 0, 1))
+	whiteFront := scene.NewEntity(
+		mesh.NewCube(geom.GetVector3(1, 1, 1)),
+		material.NewColorFillMaterial(material.GetColor(255, 255, 255)),
+		geom.GetVector3(0.4, 0, 1))
 
-	eye := geom.Vector3{X: 0, Y: 0, Z: 5}
+	yellowBack := scene.NewEntity(
+		mesh.NewCube(geom.GetVector3(1, 1, 1)),
+		material.NewColorFillMaterial(material.GetColor(252, 186, 3)),
+		geom.GetVector3(0, 0, 0))
+
+	eye := geom.Vector3{X: 0, Y: 0, Z: 2}
 	target := geom.Vector3{X: 0, Y: 0, Z: -1}
 	up := geom.Vector3{X: 0, Y: 1, Z: 0}
 
@@ -42,14 +50,14 @@ func main() {
 
 	vp := proj.Mul(&view)
 
-	scn.Add(&cube1, &cube2)
+	scn.Add(&yellowBack, &whiteFront)
 
 	for {
 		screen.BeginFrame()
 		renderer.Render(scn, vp)
 
 		screen.Present()
-		cube1.Rot.X += 0.1
+		// cube1.Rot.X += 0.001
 
 	}
 }
