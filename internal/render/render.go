@@ -2,14 +2,21 @@ package render
 
 import (
 	"gortex/internal/geom"
+	"gortex/internal/material"
 	"gortex/internal/mesh"
 	"gortex/internal/scene"
+	"gortex/internal/utils"
+	"math"
 )
 
+type Material interface {
+	Shade(input material.FragmentInput) material.Pixel
+}
+
 type Screen interface {
-	DrawLine(x0, y0, x1, y1 int)
 	Width() int
 	Height() int
+	SetPixel(x, y int, pixel material.Pixel)
 }
 
 type Renderer struct {
@@ -19,12 +26,15 @@ type Renderer struct {
 
 func NewRenderer(screen Screen) Renderer {
 	return Renderer{
-		depth:  []float64{},
+		depth:  make([]float64, screen.Width()*screen.Height()),
 		screen: screen,
 	}
 }
 
 func (r Renderer) Render(scn scene.Scene, vp geom.Matrix) {
+	for i := range r.depth {
+		r.depth[i] = math.Inf(1) // +∞
+	}
 	for _, entity := range scn.Entities {
 		model := entity.ModelMatrix()
 		MVP := vp.Mul(&model)
@@ -38,6 +48,15 @@ func ToScreen(v geom.Vector3, w, h int) (int, int) {
 	y := (v.Y + 1) * 0.5 * float64(h-1)
 
 	return int(x), int(y)
+}
+
+func (r Renderer) setPixel(x, y int, z float64) {
+	idx := x + y*r.screen.Width()
+	if z < r.depth[idx] {
+		r.depth[idx] = z
+		// TODO use material of entity
+		r.screen.SetPixel(x, y, material.Pixel{Symbol: '~', Color: material.GetColor(85, 133, 212)})
+	}
 }
 
 func (r Renderer) RenderMesh(mesh mesh.Mesh, MVP geom.Matrix) {
@@ -55,8 +74,9 @@ func (r Renderer) RenderMesh(mesh mesh.Mesh, MVP geom.Matrix) {
 		cx, cy := ToScreen(c, r.screen.Width(), r.screen.Height())
 
 		// draw wireframe
-		r.screen.DrawLine(ax, ay, bx, by)
-		r.screen.DrawLine(bx, by, cx, cy)
-		r.screen.DrawLine(cx, cy, ax, ay)
+		utils.BresenhamWithT(ax, ay, bx, by, func(x, y int, t float64) { r.setPixel(x, y, a.Z*(1-t)+b.Z*t) })
+		utils.BresenhamWithT(bx, by, cx, cy, func(x, y int, t float64) { r.setPixel(x, y, b.Z*(1-t)+c.Z*t) })
+		utils.BresenhamWithT(cx, cy, ax, ay, func(x, y int, t float64) { r.setPixel(x, y, a.Z*(1-t)+b.Z*t) })
+
 	}
 }
