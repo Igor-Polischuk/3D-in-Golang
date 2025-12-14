@@ -35,9 +35,10 @@ func main() {
 	yellowBack := scene.NewEntity(
 		mesh.NewCube(geom.GetVector3(1, 1, 1)),
 		material.NewColorFillMaterial(material.GetColor(252, 186, 3)),
+		// material.NewASCIIFillMaterial('.'),
 		geom.GetVector3(0, 0, 0))
 
-	eye := geom.Vector3{X: 0, Y: 0, Z: 2}
+	eye := geom.Vector3{X: 0, Y: 0, Z: 4}
 	target := geom.Vector3{X: 0, Y: 0, Z: -1}
 	up := geom.Vector3{X: 0, Y: 1, Z: 0}
 
@@ -48,16 +49,18 @@ func main() {
 	fov := 60 * math.Pi / 180
 	proj := geom.Perspective(fov, aspect, 0.1, 100)
 
-	vp := proj.Mul(&view)
+	// vp := proj.Mul(&view)
 
-	scn.Add(&yellowBack, &whiteFront)
+	// scn.Add(&yellowBack)
+	scn.Add(&whiteFront, &yellowBack)
 
 	for {
 		screen.BeginFrame()
-		renderer.Render(scn, vp)
+		renderer.RenderScene(scn, view, proj)
 
 		screen.Present()
-		// cube1.Rot.X += 0.001
+		whiteFront.Rot.Y -= 0.001
+		yellowBack.Rot.Y += 0.001
 
 	}
 }
