@@ -24,13 +24,10 @@ func main() {
 	// screen := tscreen.InitTerminalScreen(w, h, nil, ' ')
 	screen := glfwscreen.InitGLFWScreen(1080, 720, nil)
 
-	cube1 := scene.NewEntity(mesh.NewCube(geom.GetVector3(1, 1, 1)), geom.GetVector3(0, 0.5, 0))
-	// cube2 := scene.NewEntity(mesh.NewCube(geom.GetVector3(1, 1, 1)), geom.GetVector3(1, 0, 0))
-	// cube3 := scene.NewEntity(mesh.NewCube(geom.GetVector3(1, 1, 1)), geom.GetVector3(-1, 0, 0))
-	// cube4 := scene.NewEntity(mesh.NewCube(geom.GetVector3(1, 1, 1)), geom.GetVector3(0, 0, 1))
-	// terrain := scene.NewEntity()
+	cube1 := scene.NewEntity(mesh.NewCube(geom.GetVector3(1, 1, 1)), geom.GetVector3(-1, 0, 0))
+	cube2 := scene.NewEntity(mesh.NewCube(geom.GetVector3(1, 1, 1)), geom.GetVector3(1, 0, 0))
 
-	cubes := []scene.Entity{cube1}
+	cubes := []scene.Entity{cube1, cube2}
 
 	for {
 		screen.BeginFrame()
@@ -56,6 +53,13 @@ func main() {
 			render.RenderMesh(cube.Mesh, MVP, screen)
 		}
 
+		cubes[0].Rot.X += 0.001
+		cubes[0].Rot.Z -= 0.007
+
+		cubes[1].Rot.Y -= 0.007
+		cubes[1].Rot.X += 0.006
+
 		screen.Present()
+
 	}
 }
