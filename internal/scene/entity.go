@@ -2,21 +2,23 @@ package scene
 
 import (
 	"gortex/internal/geom"
+	"gortex/internal/material"
 	"gortex/internal/mesh"
 )
 
 type Entity struct {
-	Mesh mesh.Mesh
-
+	Mesh            mesh.Mesh
+	Material        material.Material
 	Pos, Rot, Scale geom.Vector3
 }
 
-func NewEntity(m mesh.Mesh, pos geom.Vector3) Entity {
+func NewEntity(m mesh.Mesh, mat material.Material, pos geom.Vector3) Entity {
 	return Entity{
-		Mesh:  m,
-		Pos:   pos,
-		Rot:   geom.ZeroVector3(),
-		Scale: geom.GetVector3(1, 1, 1),
+		Mesh:     m,
+		Pos:      pos,
+		Rot:      geom.ZeroVector3(),
+		Scale:    geom.GetVector3(1, 1, 1),
+		Material: mat,
 	}
 }
 

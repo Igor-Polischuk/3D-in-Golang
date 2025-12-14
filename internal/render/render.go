@@ -9,10 +9,6 @@ import (
 	"math"
 )
 
-type Material interface {
-	Shade(input material.FragmentInput) material.Pixel
-}
-
 type Screen interface {
 	Width() int
 	Height() int
@@ -39,7 +35,7 @@ func (r Renderer) Render(scn scene.Scene, vp geom.Matrix) {
 		model := entity.ModelMatrix()
 		MVP := vp.Mul(&model)
 
-		r.RenderMesh(entity.Mesh, MVP)
+		r.RenderMesh(entity.Mesh, entity.Material, MVP)
 	}
 }
 
@@ -50,16 +46,19 @@ func ToScreen(v geom.Vector3, w, h int) (int, int) {
 	return int(x), int(y)
 }
 
-func (r Renderer) setPixel(x, y int, z float64) {
+func (r Renderer) setPixel(x, y int, z float64, pixel material.Pixel) {
+	// Bounds checking to prevent index out of range
+	if x < 0 || x >= r.screen.Width() || y < 0 || y >= r.screen.Height() {
+		return
+	}
 	idx := x + y*r.screen.Width()
 	if z < r.depth[idx] {
 		r.depth[idx] = z
-		// TODO use material of entity
-		r.screen.SetPixel(x, y, material.Pixel{Symbol: '~', Color: material.GetColor(85, 133, 212)})
+		r.screen.SetPixel(x, y, pixel)
 	}
 }
 
-func (r Renderer) RenderMesh(mesh mesh.Mesh, MVP geom.Matrix) {
+func (r Renderer) RenderMesh(mesh mesh.Mesh, mat material.Material, MVP geom.Matrix) {
 	// MVP := proj.Mul(&view).Mul(&model)
 	transformed := mesh.Transform(MVP)
 
@@ -74,9 +73,21 @@ func (r Renderer) RenderMesh(mesh mesh.Mesh, MVP geom.Matrix) {
 		cx, cy := ToScreen(c, r.screen.Width(), r.screen.Height())
 
 		// draw wireframe
-		utils.BresenhamWithT(ax, ay, bx, by, func(x, y int, t float64) { r.setPixel(x, y, a.Z*(1-t)+b.Z*t) })
-		utils.BresenhamWithT(bx, by, cx, cy, func(x, y int, t float64) { r.setPixel(x, y, b.Z*(1-t)+c.Z*t) })
-		utils.BresenhamWithT(cx, cy, ax, ay, func(x, y int, t float64) { r.setPixel(x, y, a.Z*(1-t)+b.Z*t) })
+		utils.BresenhamWithT(ax, ay, bx, by, func(x, y int, t float64) {
+			z := a.Z*(1-t) + b.Z*t
+			pixel := mat.Shade(material.FragmentInput{X: x, Y: y, Z: z})
+			r.setPixel(x, y, z, pixel)
+		})
+		utils.BresenhamWithT(bx, by, cx, cy, func(x, y int, t float64) {
+			z := b.Z*(1-t) + c.Z*t
+			pixel := mat.Shade(material.FragmentInput{X: x, Y: y, Z: z})
+			r.setPixel(x, y, z, pixel)
+		})
+		utils.BresenhamWithT(cx, cy, ax, ay, func(x, y int, t float64) {
+			z := c.Z*(1-t) + a.Z*t
+			pixel := mat.Shade(material.FragmentInput{X: x, Y: y, Z: z})
+			r.setPixel(x, y, z, pixel)
+		})
 
 	}
 }
